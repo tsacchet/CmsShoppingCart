@@ -4,16 +4,22 @@
     ViewBag.Title = "Categories";
 }
 
-<h2>Categories</h2>
+<h2 class="display-4">Categories</h2>
+
 <div class="new-cat">
-    <input type="text" id="newcatname" />
-    <p>
-        <a href="#" id="newcata">Add a new category</a>
-        <span class="ajax-text">
-            <img src="~/Content/img/ajax-loader.gif" />
-        </span>
-    </p>
-</div>
+    <div class="input-group mb-3">
+        <input type="text" id="newcatname" class="form-control col-sm-3" placeholder="Add Category" />
+        <div class="input-group-append">
+            <a href="#" id="newcata" class="btn btn-primary">Add a new category</a>
+        </div>
+    </div>
+<p>
+    
+    <span class="ajax-text">
+        <img src="~/Content/img/ajax-loader.gif" />
+    </span>
+</p>
+    </div>
 
 @if (!Model.Any())
 {
@@ -37,7 +43,7 @@ else
                     @Html.EditorFor(modelItem => item.Name, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 </td>
                 <td>
-                    @Html.ActionLink("Delete", "DeleteCategory", new { id = item.Id }, new { @class = "delete" })
+                    @Html.ActionLink("Delete", "DeleteCategory", new { id = item.Id }, new { @class = "delete btn btn-danger" })
                 </td>
             </tr>
         }
@@ -80,7 +86,8 @@ $(function () {
 
         ajaxText.show();
 
-        var url = "/admin/shop/AddNewCategory";
+        //var url = "/admin/shop/AddNewCategory";
+        var url = "@(Url.Action("AddNewCategory", "Shop"))";
 
         $.post(url, { catName: catName }, function (data) {
 
@@ -90,7 +97,7 @@ $(function () {
                 ajaxText.html("<span class='alert alert-danger'>That Title is Taken!</span>");
                 setTimeout(function () {
                     ajaxText.fadeOut("fast", function () {
-                        ajaxText.html("<img src=/Content/img/ajax-loader.gif   />");
+                        ajaxText.html("<img src=~/Content/img/ajax-loader.gif   />");
                     });
                 }, 2000);
                 return false;
@@ -101,7 +108,7 @@ $(function () {
                     ajaxText.html("<span class='alert alert-success'>The category has been added!</span>");
                     setTimeout(function () {
                         ajaxText.fadeOut("fast", function () {
-                            ajaxText.html("<img src=/Content/img/ajax-loader.gif   />");
+                            ajaxText.html("<img src=~/Content/img/ajax-loader.gif   />");
                         });
                     }, 2000);
 
@@ -110,11 +117,11 @@ $(function () {
                     var toAppend = $("table#pages tbody tr:last").clone();
                     toAppend.attr("id", "id_" + data);
                     toAppend.find("#item_Name").val(catName);
-                    toAppend.find("a.delete").attr("href", "/admin/shop/DeleteCategory/" + data);
+                    toAppend.find("a.delete").attr("href", "~/admin/shop/DeleteCategory/" + data);
                     table.append(toAppend);
                     table.sortable("refresh");
                 }
-                
+
             }
 
         });
@@ -132,7 +139,8 @@ $(function () {
         placeholder: "ui-state-highlight",
         update: function () {
             var ids = $("table#pages tbody").sortable("serialize");
-            var url = "/Admin/Shop/ReorderCategories";
+            //var url = "/Admin/Shop/ReorderCategories";
+            var url = "@(Url.Action("ReorderCategories", "Shop"))";
 
             $.post(url, ids, function (data) {
             });
@@ -172,7 +180,8 @@ $(function () {
         var ajaxdiv = $this.parent().find(".ajaxdivtd");
         var newCatName = $this.val();
         var id = $this.parent().parent().attr("id").substring(3);
-        var url = "/admin/shop/RenameCategory";
+        //var url = "/admin/shop/RenameCategory";
+        var url = "@(Url.Action("RenameCategory", "Shop"))";
 
         if (newCatName.length < 2) {
             alert("Category name mus bew at least 2 characters long.");

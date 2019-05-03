@@ -1,10 +1,12 @@
-﻿@model IEnumerable<CmsShoppingCart.Models.ViewModels.Cart.CartVM>
+﻿@using System.Configuration
+@model IEnumerable<CmsShoppingCart.Models.ViewModels.Cart.CartVM>
 
 @{
     ViewBag.Title = "Cart Details";
+    int count = 1;
 }
 
-<h2>Cart Details</h2>
+<h2 class="display-4">Cart Details</h2>
 
 @if (ViewBag.Message != null)
 {
@@ -12,79 +14,112 @@
 }
 else
 {
-    <table class="table">
-        <tr>
-            @*<th>
+    <div class="ajaxbg"><span><img src="~/Content/img/ajax-loader.gif" /></span></div>
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                @*<th>
                     @Html.DisplayNameFor(model => model.ProductId)
                 </th>*@
-            <th>
-                @Html.DisplayNameFor(model => model.ProductName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Quantity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Image)
-            </th>
-            <th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProductName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Quantity)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Price)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Image)
+                </th>
+                <th>
 
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Total)
-            </th>
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Total)
+                </th>
 
-            <th>
+                <th>
 
-            </th>
-
-        </tr>
-
-        @foreach (var item in Model)
-        {
-            <tr>
-                @*<td>
-                        @Html.DisplayFor(modelItem => item.ProductId)
-                    </td>*@
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProductName)
-                </td>
-                <td class="qty@(item.ProductId)">
-                    @Html.DisplayFor(modelItem => item.Quantity)
-                </td>
-                <td>
-                    $@Html.DisplayFor(modelItem => item.Price)
-                </td>
-                <td>
-                    <img src="/Images/Uploads/Products/@item.ProductId/Thumbs/@item.Image" />
-                </td>
-
-
-                <td>
-                    <a href="#" class="incrproduct" data-id="@item.ProductId">+</a>
-                    <a href="#" class="decrproduct" data-id="@item.ProductId">-</a>
-                    <a href="#" class="removeproduct" data-id="@item.ProductId">Remove</a>
-                </td>
-
-                <td class="total@(item.ProductId)">
-                    $@Html.DisplayFor(modelItem => item.Total)
-                </td>
+                </th>
 
             </tr>
-        }
+            </thead>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @*<td>
+                        @Html.DisplayFor(modelItem => item.ProductId)
+                    </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductName)
+                    </td>
+                    <td class="qty@(item.ProductId)">
+                        @Html.DisplayFor(modelItem => item.Quantity)
+                    </td>
+                    <td>
+                        $@Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                    <td>
+                        <img src="~/Images/Uploads/Products/@item.ProductId/Thumbs/@item.Image" />
+                    </td>
 
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="grandtotal"><b>Grand Total</b> $<span> @ViewBag.GrandTotal</span></td>
-        </tr>
+
+                    <td>
+                        @*<a href="#" class="incrproduct" data-id="@item.ProductId">+</a>*@
+                        <a href="#" class="incrproduct" data-id="@item.ProductId"><span class="btn btn-primary fa fa-plus"> </span></a>
+                        @*<a href="#" class="decrproduct" data-id="@item.ProductId">-</a>*@
+                        <a href="#" class="decrproduct" data-id="@item.ProductId"><span class="btn btn-primary fa fa-minus"> </span></a>
+
+                        <a href="#" class="removeproduct" data-id="@item.ProductId"><span class="btn btn-primary fa fa-trash"> </span></a>
+                        @*<a href="#" class="removeproduct" data-id="@item.ProductId">Remove</a>*@
+                    </td>
+
+                    <td class="total@(item.ProductId)">
+                        $@Html.DisplayFor(modelItem => item.Total)
+                    </td>
+
+                </tr>
+            }
+
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="grandtotal bg-dark text-white" ><b>Grand Total</b> $<span> @ViewBag.GrandTotal</span></td>
+            </tr>
     </table>
+
+    @*<div class="paypaldiv">
+        <form class="paypalform" action="@ConfigurationManager.AppSettings["PayPalSiteSubmit"]" method="post">
+            <input type="hidden" name="return" value="@ConfigurationManager.AppSettings["PayPalSiteReturn"]" />
+
+            <input type="hidden" name="cmd" value="_cart">
+            <input type="hidden" name="upload" value="1">
+            <input type="hidden" name="business" value="@ConfigurationManager.AppSettings["PayPalBusiness"]">
+
+            @foreach (var item in Model)
+            {
+                <input type="hidden" name="item_name_@count" value="@item.ProductName">
+                <input type="hidden" name="amount_@count" value="@item.Price">
+                <input type="hidden" name="quantity_@count" value="@item.Quantity">
+                count++;
+            }
+
+            <input type="hidden" name="currency_code" value="AUD">
+            <input type="image" src="http://www.paypal.com/en_US/i/btn/x-click-but01.gif" name="submit">
+        </form>
+    </div>*@
+
+    <br />
+
+    @*<a href="#" class="placeorder btn btn-primary float-right">Checkout</a>*@
+
+    @Html.ActionLink("Checkout", "PaymentWithPaypal", null, new { @class = "btn btn-primary float-right" })
 
 }
 
@@ -101,8 +136,8 @@ else
                 e.preventDefault();
 
                 var productId = $(this).data("id");
-                var url = "/cart/IncrementProduct";
-
+                //var url = "~/cart/IncrementProduct";
+                var url = "@(Url.Action("IncrementProduct", "Cart"))";
                 $.getJSON(url, { ProductId: productId }, function (data) {
 
                     $("td.qty" + productId).html(data.qty);
@@ -116,6 +151,13 @@ else
                     var grandtotal = (gt + data.price).toFixed(2);
 
                     $("td.grandtotal span").text(grandtotal);
+                }).done(function (data) {
+                    //var url2 = "~/cart/PayPalPartial";
+                    var url2 = "@(Url.Action("PayPalPartial", "Cart"))";
+                    $.get(url2, {}, function (data) {
+                        $("div.paypaldiv").html(data);
+                    });
+
                 });
 
             });
@@ -130,7 +172,8 @@ else
 
                 var $this = $(this);
                 var productId = $(this).data("id");
-                var url = "/cart/DecrementProduct";
+                //var url = "~/cart/DecrementProduct";
+                var url = "@(Url.Action("DecrementProduct", "Cart"))";
 
                 $.getJSON(url, { ProductId: productId }, function (data) {
 
@@ -153,6 +196,12 @@ else
 
                         $("td.grandtotal span").text(grandtotal);
                     }
+                }).done(function (data) {
+                    //var url2 = "~/cart/PayPalPartial";
+                    var url2 = "@(Url.Action("PayPalPartial", "Cart"))";
+                    $.get(url2, {}, function (data) {
+                        $("div.paypaldiv").html(data);
+                    });
                 });
 
             });
@@ -167,14 +216,40 @@ else
 
                 var $this = $(this);
                 var productId = $(this).data("id");
-                var url = "/cart/RemoveProduct";
+                //var url = "~/cart/RemoveProduct";
+                var url = "@(Url.Action("RemoveProduct", "Cart"))";
 
                 $.get(url, { ProductId: productId }, function (data) {
-                    location.reload();                
+                    location.reload();
                 });
 
             });
             /////////////////////////////////////////////////////////////
+
+
+
+            /*
+             * place order
+            */
+            //$("a.placeorder").click(function (e) {
+            //    e.preventDefault();
+
+            //    var $this = $(this);
+
+            //    var url = "/cart/PaymentWithPaypal";
+            //    $(".ajaxbg").show();
+
+            //    $.post(url, {}, function (data) {
+            //        $(".ajaxbg span").text("Thank you. You will now be redirected to paypal.");
+            //        setTimeout(function () {
+            //            $('form input[name="submit"]').click();
+            //        }, 2000);
+            //    });
+
+            //});
+            /////////////////////////////////////////////////////////////
+
+
 
         });
 

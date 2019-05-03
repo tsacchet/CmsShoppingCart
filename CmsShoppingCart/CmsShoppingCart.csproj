@@ -69,12 +69,17 @@
     <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
       <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
     </Reference>
+    <Reference Include="PayPal, Version=1.9.1.0, Culture=neutral, PublicKeyToken=5b4afc1ccaef40fb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PayPal.1.9.1\lib\net451\PayPal.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.3.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.5.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -136,6 +141,8 @@
     <Compile Include="Areas\Admin\Controllers\DashboardController.cs" />
     <Compile Include="Areas\Admin\Controllers\PagesController.cs" />
     <Compile Include="Areas\Admin\Controllers\ShopController.cs" />
+    <Compile Include="Areas\Admin\Models\ViewModels\Shop\OrdersForAdminVM.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\PagesController.cs" />
     <Compile Include="Controllers\ShopController.cs" />
@@ -144,15 +151,27 @@
     </Compile>
     <Compile Include="Models\Data\CategoryDTO.cs" />
     <Compile Include="Models\Data\Db.cs" />
+    <Compile Include="Models\Data\OrderDetailsDTO.cs" />
+    <Compile Include="Models\Data\OrderDTO.cs" />
     <Compile Include="Models\Data\PageDTO.cs" />
     <Compile Include="Models\Data\ProductDTO.cs" />
+    <Compile Include="Models\Data\RoleDTO.cs" />
     <Compile Include="Models\Data\SidebarDTO.cs" />
+    <Compile Include="Models\Data\UserDTO.cs" />
+    <Compile Include="Models\Data\UserRoleDTO.cs" />
+    <Compile Include="Models\ViewModels\Account\LoginUserVM.cs" />
+    <Compile Include="Models\ViewModels\Account\OrdersForUserVM.cs" />
+    <Compile Include="Models\ViewModels\Account\UserNavPartialVM.cs" />
+    <Compile Include="Models\ViewModels\Account\UserProfileVM.cs" />
+    <Compile Include="Models\ViewModels\Account\UserVM.cs" />
     <Compile Include="Models\ViewModels\Cart\CartVM.cs" />
     <Compile Include="Models\ViewModels\Pages\PageVM.cs" />
     <Compile Include="Models\ViewModels\Pages\SidebarVM.cs" />
     <Compile Include="Models\ViewModels\Shop\CategoryVM.cs" />
+    <Compile Include="Models\ViewModels\Shop\OrderVM.cs" />
     <Compile Include="Models\ViewModels\Shop\ProductVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\PayPalConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\CmsShoppingCart.mdf" />
@@ -172,6 +191,8 @@
     <Content Include="Content\fancybox\fancybox_overlay.png" />
     <Content Include="Content\fancybox\fancybox_sprite%402x.png" />
     <Content Include="Content\fancybox\fancybox_sprite.png" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\img\ajax-loader.gif" />
     <Content Include="Content\jquery.fancybox-buttons.css" />
     <Content Include="Content\jquery.fancybox-thumbs.css" />
@@ -454,8 +475,90 @@
     <Content Include="fileman\Uploads\Images\DSC_5744.jpg" />
     <Content Include="fileman\Uploads\LICENSE.txt" />
     <Content Include="fileman\Uploads\roxy-fileman-logo.gif" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\Uploads\Products\10\apple1.jpg" />
+    <Content Include="Images\Uploads\Products\10\Gallery\apple2.jpg" />
+    <Content Include="Images\Uploads\Products\10\Gallery\apple3.jpg" />
+    <Content Include="Images\Uploads\Products\10\Gallery\apple4.jpg" />
+    <Content Include="Images\Uploads\Products\10\Gallery\Thumbs\apple2.jpg" />
+    <Content Include="Images\Uploads\Products\10\Gallery\Thumbs\apple3.jpg" />
+    <Content Include="Images\Uploads\Products\10\Gallery\Thumbs\apple4.jpg" />
+    <Content Include="Images\Uploads\Products\10\Thumbs\apple1.jpg" />
+    <Content Include="Images\Uploads\Products\11\Gallery\grapefruit2.jpg" />
+    <Content Include="Images\Uploads\Products\11\Gallery\grapefruit3.jpg" />
+    <Content Include="Images\Uploads\Products\11\Gallery\grapefruit4.jpg" />
+    <Content Include="Images\Uploads\Products\11\Gallery\Thumbs\grapefruit2.jpg" />
+    <Content Include="Images\Uploads\Products\11\Gallery\Thumbs\grapefruit3.jpg" />
+    <Content Include="Images\Uploads\Products\11\Gallery\Thumbs\grapefruit4.jpg" />
+    <Content Include="Images\Uploads\Products\11\grapefruit1.jpg" />
+    <Content Include="Images\Uploads\Products\11\Thumbs\grapefruit1.jpg" />
+    <Content Include="Images\Uploads\Products\12\Gallery\grapes2.jpg" />
+    <Content Include="Images\Uploads\Products\12\Gallery\grapes3.jpg" />
+    <Content Include="Images\Uploads\Products\12\Gallery\grapes4.jpg" />
+    <Content Include="Images\Uploads\Products\12\Gallery\Thumbs\grapes2.jpg" />
+    <Content Include="Images\Uploads\Products\12\Gallery\Thumbs\grapes3.jpg" />
+    <Content Include="Images\Uploads\Products\12\Gallery\Thumbs\grapes4.jpg" />
+    <Content Include="Images\Uploads\Products\12\grapes1.jpg" />
+    <Content Include="Images\Uploads\Products\12\Thumbs\grapes1.jpg" />
+    <Content Include="Images\Uploads\Products\13\Gallery\mand2.jpg" />
+    <Content Include="Images\Uploads\Products\13\Gallery\mand3.jpg" />
+    <Content Include="Images\Uploads\Products\13\Gallery\mand4.jpg" />
+    <Content Include="Images\Uploads\Products\13\Gallery\Thumbs\mand2.jpg" />
+    <Content Include="Images\Uploads\Products\13\Gallery\Thumbs\mand3.jpg" />
+    <Content Include="Images\Uploads\Products\13\Gallery\Thumbs\mand4.jpg" />
+    <Content Include="Images\Uploads\Products\13\mand1.jpg" />
+    <Content Include="Images\Uploads\Products\13\Thumbs\mand1.jpg" />
+    <Content Include="Images\Uploads\Products\14\Gallery\orange2.jpg" />
+    <Content Include="Images\Uploads\Products\14\Gallery\orange3.jpg" />
+    <Content Include="Images\Uploads\Products\14\Gallery\orange4.jpg" />
+    <Content Include="Images\Uploads\Products\14\Gallery\Thumbs\orange2.jpg" />
+    <Content Include="Images\Uploads\Products\14\Gallery\Thumbs\orange3.jpg" />
+    <Content Include="Images\Uploads\Products\14\Gallery\Thumbs\orange4.jpg" />
+    <Content Include="Images\Uploads\Products\14\orange1.jpg" />
+    <Content Include="Images\Uploads\Products\14\Thumbs\orange1.jpg" />
+    <Content Include="Images\Uploads\Products\4\blue1.jpg" />
+    <Content Include="Images\Uploads\Products\4\Gallery\blue2.jpg" />
+    <Content Include="Images\Uploads\Products\4\Gallery\blue3.png" />
+    <Content Include="Images\Uploads\Products\4\Gallery\blue4.png" />
+    <Content Include="Images\Uploads\Products\4\Gallery\Thumbs\blue2.jpg" />
+    <Content Include="Images\Uploads\Products\4\Gallery\Thumbs\blue3.png" />
+    <Content Include="Images\Uploads\Products\4\Gallery\Thumbs\blue4.png" />
+    <Content Include="Images\Uploads\Products\4\Thumbs\blue1.jpg" />
+    <Content Include="Images\Uploads\Products\5\Gallery\red2.png" />
+    <Content Include="Images\Uploads\Products\5\Gallery\red3.png" />
+    <Content Include="Images\Uploads\Products\5\Gallery\red4.png" />
+    <Content Include="Images\Uploads\Products\5\Gallery\Thumbs\red2.png" />
+    <Content Include="Images\Uploads\Products\5\Gallery\Thumbs\red3.png" />
+    <Content Include="Images\Uploads\Products\5\Gallery\Thumbs\red4.png" />
+    <Content Include="Images\Uploads\Products\5\red1.jpg" />
+    <Content Include="Images\Uploads\Products\5\Thumbs\red1.jpg" />
+    <Content Include="Images\Uploads\Products\6\Gallery\green2.png" />
+    <Content Include="Images\Uploads\Products\6\Gallery\green3.png" />
+    <Content Include="Images\Uploads\Products\6\Gallery\green4.png" />
+    <Content Include="Images\Uploads\Products\6\Gallery\Thumbs\green2.png" />
+    <Content Include="Images\Uploads\Products\6\Gallery\Thumbs\green3.png" />
+    <Content Include="Images\Uploads\Products\6\Gallery\Thumbs\green4.png" />
+    <Content Include="Images\Uploads\Products\6\green1.png" />
+    <Content Include="Images\Uploads\Products\6\Thumbs\green1.png" />
+    <Content Include="Images\Uploads\Products\7\Gallery\Thumbs\yellow2.jpg" />
+    <Content Include="Images\Uploads\Products\7\Gallery\Thumbs\yellow3.jpg" />
+    <Content Include="Images\Uploads\Products\7\Gallery\Thumbs\yellow4.jpg" />
+    <Content Include="Images\Uploads\Products\7\Gallery\yellow2.jpg" />
+    <Content Include="Images\Uploads\Products\7\Gallery\yellow3.jpg" />
+    <Content Include="Images\Uploads\Products\7\Gallery\yellow4.jpg" />
+    <Content Include="Images\Uploads\Products\7\Thumbs\yellow1.png" />
+    <Content Include="Images\Uploads\Products\7\yellow1.png" />
+    <Content Include="Images\Uploads\Products\8\Gallery\pink2.png" />
+    <Content Include="Images\Uploads\Products\8\Gallery\pink3.png" />
+    <Content Include="Images\Uploads\Products\8\Gallery\pink4.png" />
+    <Content Include="Images\Uploads\Products\8\Gallery\Thumbs\pink2.png" />
+    <Content Include="Images\Uploads\Products\8\Gallery\Thumbs\pink3.png" />
+    <Content Include="Images\Uploads\Products\8\Gallery\Thumbs\pink4.png" />
+    <Content Include="Images\Uploads\Products\8\pink1.png" />
+    <Content Include="Images\Uploads\Products\8\Thumbs\pink1.png" />
+    <Content Include="readme_first.txt" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -867,6 +970,13 @@
     <Content Include="Areas\Admin\Views\Shop\AddProduct.cshtml" />
     <Content Include="Areas\Admin\Views\Shop\Products.cshtml" />
     <Content Include="Areas\Admin\Views\Shop\EditProduct.cshtml" />
+    <Content Include="Areas\Admin\Views\Shop\Orders.cshtml" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -892,7 +1002,9 @@
     <Content Include="Scripts\umd\popper-utils.min.js" />
     <Content Include="Scripts\umd\popper.js" />
     <Content Include="Scripts\umd\popper.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -921,14 +1033,24 @@
     <Content Include="Views\Cart\CartPartial.cshtml" />
     <Content Include="Views\Cart\Index.cshtml" />
     <Content Include="Views\Cart\AddToCartPartial.cshtml" />
+    <Content Include="Views\Account\CreateAccount.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\UserNavPartial.cshtml" />
+    <Content Include="Views\Account\UserProfile.cshtml" />
+    <Content Include="Views\Cart\PayPalPartial.cshtml" />
+    <Content Include="Views\Account\Orders.cshtml" />
+    <Content Include="Views\Cart\SuccessView.cshtml" />
+    <Content Include="Views\Cart\FailureView.cshtml" />
+    <Content Include="Views\Cart\PaymentWithPaypal.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Areas\Admin\Models\" />
     <Folder Include="fileman\aspnet_client\system_web\2_0_50727\" />
     <Folder Include="fileman\aspnet_client\system_web\4_0_30319\" />
     <Folder Include="fileman\tmp\" />
     <Folder Include="fileman\Uploads\Documents\" />
     <Folder Include="fileman\Uploads\FLV\" />
+    <Folder Include="Images\Uploads\Products\9\Gallery\Thumbs\" />
+    <Folder Include="Images\Uploads\Products\9\Thumbs\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -937,6 +1059,7 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\index.d.ts" />

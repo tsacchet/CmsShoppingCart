@@ -1,7 +1,7 @@
 ﻿@model CmsShoppingCart.Models.ViewModels.Cart.CartVM
 
 <div class="ajaxcart" style="color: white;">
-    Your cart: @Model.Quantity item(s) - $@Model.Price
+    <span class="fa fa-shopping-cart"></span> Your cart: @Model.Quantity item(s) - $@Model.Price
     <br />
-    @Html.ActionLink("Checkout", "Index")
+    @Html.ActionLink("Checkout", "Index", null, new { @class = "btn btn-warning btn-sm btn-block" })
 </div>

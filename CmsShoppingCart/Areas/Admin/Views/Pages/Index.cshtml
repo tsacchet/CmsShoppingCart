@@ -4,10 +4,11 @@
     ViewBag.Title = "Pages";
 }
 
-<h2>Pages</h2>
+<h2 class="display-4">Pages</h2>
+<br />
 
 <p>
-    @Html.ActionLink("Add New Page", "AddPage")
+    @Html.ActionLink("Add New Page", "AddPage", null, new { @class = "btn btn-primary" })
 </p>
 
 @if (!Model.Any())
@@ -17,25 +18,26 @@
 else
 {
     <table class="table sorting" id="pages">
-        <tr class="home">
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Slug)
-            </th>
-            @*<th>
+        <thead class="thead-light">
+            <tr class="home">
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Slug)
+                </th>
+                @*<th>
                 @Html.DisplayNameFor(model => model.Body)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Sorting)
             </th>*@
-            <th>
-                @Html.DisplayNameFor(model => model.HasSidebar)
-            </th>
-            <th></th>
-        </tr>
-
+                <th>
+                    @Html.DisplayNameFor(model => model.HasSidebar)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
     @foreach (var item in Model)
     {
         <tr id="id_@item.Id" class="@item.Slug">
@@ -55,11 +57,11 @@ else
                 @Html.DisplayFor(modelItem => item.HasSidebar)
             </td>
             <td>
-                @Html.ActionLink("Edit", "EditPage", new { id = item.Id }) |
-                @Html.ActionLink("Details", "PageDetails", new { id = item.Id }) |
+                @Html.ActionLink("Edit", "EditPage", new { id = item.Id }, new { @class = "btn btn-success btn-sm" }) 
+                @Html.ActionLink("Details", "PageDetails", new { id = item.Id }, new { @class = "btn btn-warning btn-sm" })
                 @if (item.Slug != "home")
                 {
-                    @Html.ActionLink("Delete", "DeletePage", new { id = item.Id }, new { @class = "delete"})
+                    @Html.ActionLink("Delete", "DeletePage", new { id = item.Id }, new { @class = "delete btn btn-danger btn-sm"})
                 }
             </td>
         </tr>
@@ -93,7 +95,8 @@ $(function () {
         placeholder: "ui-state-highlight",
         update: function () {
             var ids = $("table#pages tbody").sortable("serialize");
-            var url = "/Admin/Pages/ReorderPages";
+            //var url = "~/Admin/Pages/ReorderPages";
+            var url = "@(Url.Action("ReorderPages", "Pages"))";
 
             $.post(url, ids, function (data) {
             });

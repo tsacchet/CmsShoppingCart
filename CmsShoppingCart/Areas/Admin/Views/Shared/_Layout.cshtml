@@ -12,7 +12,8 @@
         <div class="container">
             @*@Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })*@
 
-            <a href="/admin/dashboard" class="navbar-brand">Dashboard</a>
+            @*<a href="/admin/dashboard" class="navbar-brand">Dashboard</a>*@
+            @Html.ActionLink("Dashboard", "index", "Dashboard", null, new { @class = "navbar-brand" })
 
             <button type="button" class="navbar-toggler" data-toggle="collapse" data-target=".navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -24,9 +25,11 @@
                     <li class="nav-item">@Html.ActionLink("Sidebar", "EditSidebar", "pages", null, new { @class = "nav-link" })</li>
                     <li class="nav-item">@Html.ActionLink("Categories", "Categories", "shop", null, new { @class = "nav-link" })</li>
                     <li class="nav-item">@Html.ActionLink("Products", "Products", "shop", null, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Orders", "Orders", "shop", null, new { @class = "nav-link" })</li>
                 </ul>
                 <ul class="navbar-nav">
-                    <a href="/" class="navbar-brand" target="_blank">CmsShoppingCart</a>
+                    <a href="~/home" class="navbar-brand text-warning" target="_blank">ShoppingCart</a>
+
                 </ul>
             </div>
         </div>

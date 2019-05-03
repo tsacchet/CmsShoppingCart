@@ -8,9 +8,11 @@ using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
 using PagedList;
+using CmsShoppingCart.Areas.Admin.Models.ViewModels.Shop;
 
 namespace CmsShoppingCart.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ShopController : Controller
     {
 
@@ -222,7 +224,7 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
             #region Upload Image
 
             // create necessary directories
-            var orginalDirectory = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
+            var orginalDirectory = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"~\")));
           
             var pathsString1 = Path.Combine(orginalDirectory.ToString(), "Products");
             var pathsString2 = Path.Combine(orginalDirectory.ToString(), "Products\\" + id.ToString());
@@ -230,20 +232,34 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
             var pathsString4 = Path.Combine(orginalDirectory.ToString(), "Products\\" + id.ToString() + "\\Gallery");
             var pathsString5 = Path.Combine(orginalDirectory.ToString(), "Products\\" + id.ToString() + "\\Gallery\\Thumbs");
 
-            if (!Directory.Exists(pathsString1))
-                Directory.CreateDirectory(pathsString1);
+            try
+            {
 
-            if (!Directory.Exists(pathsString2))
-                Directory.CreateDirectory(pathsString2);
+                if (!Directory.Exists(pathsString1))
+                    Directory.CreateDirectory(pathsString1);
 
-            if (!Directory.Exists(pathsString3))
-                Directory.CreateDirectory(pathsString3);
+                if (!Directory.Exists(pathsString2))
+                    Directory.CreateDirectory(pathsString2);
 
-            if (!Directory.Exists(pathsString4))
-                Directory.CreateDirectory(pathsString4);
+                if (!Directory.Exists(pathsString3))
+                    Directory.CreateDirectory(pathsString3);
 
-            if (!Directory.Exists(pathsString5))
-                Directory.CreateDirectory(pathsString5);
+                if (!Directory.Exists(pathsString4))
+                    Directory.CreateDirectory(pathsString4);
+
+                if (!Directory.Exists(pathsString5))
+                    Directory.CreateDirectory(pathsString5);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Driectory Creatation failed : " + ex.Message);
+                
+                //Write to a file
+                using (StreamWriter writer = new StreamWriter(System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath +"\\Wfile.txt", true))
+                {
+                    writer.WriteLine("Directory Creatation failed : " + ex.Message);
+                }
+            }
 
             // check if a file was uploaded
 
@@ -279,17 +295,31 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
                     db.SaveChanges();
                 }
 
-                // set orginal and thumb image paths
-                var path = string.Format("{0}\\{1}", pathsString2, imagename);
-                var path2 = string.Format("{0}\\{1}", pathsString3, imagename);
+                try
+                {
+                    // set orginal and thumb image paths
+                    var path = string.Format("{0}\\{1}", pathsString2, imagename);
+                    var path2 = string.Format("{0}\\{1}", pathsString3, imagename);
 
-                // save orginal
-                file.SaveAs(path);
+                    // save orginal
+                    file.SaveAs(path);
 
                 // create and save thumb
                 WebImage img = new WebImage(file.InputStream);
                 img.Resize(200, 200);
                 img.Save(path2);
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Save File failed : " + ex.Message);
+                    //Write to a file
+                    using (StreamWriter writer = new StreamWriter(System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\Wfile.txt",true))
+                    {
+                        writer.WriteLine("Save File failed : " + ex.Message);
+                    }
+                }
+
             }
 
             #endregion
@@ -445,7 +475,7 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
                 }
 
                 // set upload directory paths
-                var orginalDirectory = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
+                var orginalDirectory = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"~\")));
 
                 var pathsString1 = Path.Combine(orginalDirectory.ToString(), "Products\\" + id.ToString());
                 var pathsString2 = Path.Combine(orginalDirectory.ToString(), "Products\\" + id.ToString() + "\\Thumbs");
@@ -504,7 +534,7 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
             }
 
             // Delete product Folders
-            var orginalDirectory = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
+            var orginalDirectory = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"~\")));
 
             var pathsString = Path.Combine(orginalDirectory.ToString(), "Products\\" + id.ToString());
 
@@ -532,7 +562,7 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
                 {
 
                     // set directory paths
-                    var orginalDirectory = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
+                    var orginalDirectory = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"~\")));
 
                     var pathsString1 = Path.Combine(orginalDirectory.ToString(), "Products\\" + id.ToString() + "\\Gallery");
                     var pathsString2 = Path.Combine(orginalDirectory.ToString(), "Products\\" + id.ToString() + "\\Gallery\\Thumbs");
@@ -563,6 +593,68 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
 
             if (System.IO.File.Exists(fullPath2))
                 System.IO.File.Delete(fullPath2);
+        }
+
+        // GET: Admin/Shop/Orders
+        public ActionResult Orders()
+        {
+            // Init list of OrderForAdmin
+            List<OrdersForAdminVM> ordersForAdmin = new List<OrdersForAdminVM>();
+
+            using (Db db = new Db())
+            {
+                // init list of OrderVM
+                List<OrderVM> orders = db.Orders.ToArray().Select(x => new OrderVM(x)).ToList();
+
+                // Loop through list of orders
+                foreach(var order in orders)
+                {
+                    // init product dict
+                    Dictionary<string, int> productsAndQty = new Dictionary<string, int>();
+
+                    // Declare total
+                    decimal total = 0m;
+
+                    // Init list of orderDetailsDTO
+                    List<OrderDetailsDTO> orderDetailsList = db.OrderDetails.Where(x => x.OrderId == order.OrderId).ToList();
+
+                    // Get username
+                    UserDTO user = db.Users.Where(x => x.Id == order.UserId).FirstOrDefault();
+                    string username = user.Username;
+
+                    // Loop through list of orderDetailsDTO
+                    foreach(var orderDetails in orderDetailsList)
+                    {
+                        // Get product
+                        ProductDTO product = db.Products.Where(x => x.Id == orderDetails.ProductId).FirstOrDefault();
+
+                        // get product price
+                        decimal price = product.Price;
+
+                        // Get product name
+                        string productname = product.Name;
+
+                        // Add to product dict
+                        productsAndQty.Add(productname, orderDetails.Quantity);
+
+                        // Get total
+                        total += orderDetails.Quantity * price;
+                    }
+
+                    // add to orderforadminVM list
+                    ordersForAdmin.Add(new OrdersForAdminVM()
+                    {
+                        OrderNumber = order.OrderId,
+                        Username = username,
+                        Total = total,
+                        ProductsAndQty = productsAndQty,
+                        CreatedAt = order.CreatedAt,
+                        Completed = order.Completed
+                    });
+                }
+            }
+
+            return View(ordersForAdmin);
         }
     }
 }

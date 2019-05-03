@@ -9,9 +9,10 @@
 
 <link href="~/Content/PagedList.css" rel="stylesheet" />
 
-<h2>Products</h2>
+<h2 class="display-4">Products</h2>
+<br />
 
-<select id="SelectCategory" name="SelectCategory">
+<select id="SelectCategory" name="SelectCategory" class="form-control col-sm-3">
     <option value="0">All</option>
     @foreach (var item in ViewBag.Categories)
     {
@@ -26,62 +27,63 @@
     }
 </select>
 <br />
-<br />
+@*<br />*@
 
 <p>
-    @Html.ActionLink("Add New Product", "AddProduct")
+    @Html.ActionLink("Add New Product", "AddProduct", null, new { @class = "btn btn-primary" })
 </p>
 <table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        @*<th>
-            @Html.DisplayNameFor(model => model.Slug)
-        </th>*@
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Price)
-        </th>
-        @*<th>
-                @Html.DisplayNameFor(model => model.CategoryName)
+    <thead class="thead-light">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            @*<th>
+                    @Html.DisplayNameFor(model => model.Slug)
+                </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CategoryId)
-            </th>*@
-        <th>
-            @Html.DisplayNameFor(model => model.ImageName)
-        </th>
-        <th></th>
-    </tr>
-
-    @foreach (var product in ViewBag.OnePageOfProducts)
-    {
-        @*<li>@product.Name</li>*@
-        <tr>
-            <td>
-                @product.Name
-            </td>
-            <td>
-                @product.Description
-            </td>
-            <td>
-                $@product.Price
-            </td>
-            <td>
-                <a href="/admin/shop/EditProduct/@product.Id">
-                    <img src="/Images/Uploads/Products/@product.Id/Thumbs/@product.ImageName" />
-                </a>
-
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "EditProduct", new { id = product.Id }) |
-                @Html.ActionLink("Delete", "DeleteProduct", new { id = product.Id }, new { @class="delete" })
-            </td>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            @*<th>
+                    @Html.DisplayNameFor(model => model.CategoryName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CategoryId)
+                </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.ImageName)
+            </th>
+            <th></th>
         </tr>
-    }
+        </thead>
+        @foreach (var product in ViewBag.OnePageOfProducts)
+        {
+            @*<li>@product.Name</li>*@
+            <tr>
+                <td>
+                    @product.Name
+                </td>
+                <td>
+                    @product.Description
+                </td>
+                <td>
+                    $@product.Price
+                </td>
+                <td>
+                    <a href="~/admin/shop/EditProduct/@product.Id">
+                        <img src="~/Images/Uploads/Products/@product.Id/Thumbs/@product.ImageName" />
+                    </a>
+
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "EditProduct", new { id = product.Id }, new { @class = "btn btn-success btn-sm" })
+                    @Html.ActionLink("Delete", "DeleteProduct", new { id = product.Id }, new { @class = "delete btn btn-danger btn-sm" })
+                </td>
+            </tr>
+        }
 
 
 
@@ -103,10 +105,13 @@ $(function () {
      * Select Products from specified category
     */
     $("#SelectCategory").on("change", function () {
-        var url = $(this).val();
+        var prodtype = $(this).val();
 
-        if (url) {
-            window.location = "/admin/shop/Products?catId=" + url;
+        if (prodtype) {
+            //console.log('Location = ' + window.location);
+            //console.log('Location Pathname = ' + window.location.pathname);
+            //window.location = "/admin/shop/Products?catId=" + prodtype;
+            window.location = "?catId=" + prodtype;
         }
 
         return false;
