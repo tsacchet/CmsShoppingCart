@@ -1,6 +1,6 @@
 ﻿@model CmsShoppingCart.Models.ViewModels.Cart.CartVM
 
 
-    Your cart: @Model.Quantity item(s) - $@Model.Price
-    <br />
-    @Html.ActionLink("Checkout", "Index")
+<span class="fa fa-shopping-cart"></span> Your cart: @Model.Quantity item(s) - $@Model.Price
+<br />
+@Html.ActionLink("Checkout", "Index", null, new { @class = "btn btn-warning btn-sm btn-block" })
